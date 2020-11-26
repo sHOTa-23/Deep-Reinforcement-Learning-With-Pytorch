@@ -41,7 +41,7 @@ class Agent:
             self.curr_epsilon = self.min_epsilon
 
     def learn(self, state, action, reward, new_state):
-        best_action = self._get_best_action(state)
+        best_action = self._get_best_action(new_state)
         self.q_values[(state, action)] += self.lr * (reward + self.gamma * self.q_values[(new_state, best_action)]
                                                      - self.q_values[(state, action)])
         self.decrease_epsilon()
