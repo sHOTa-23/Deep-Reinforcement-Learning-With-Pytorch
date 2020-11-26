@@ -5,7 +5,7 @@ from Tabular_Q_Learning.Agent import Agent
 
 if __name__ == '__main__':
     env = gym.make('FrozenLake-v0')
-    agent = Agent(lr=0.001, gamma=0.9, max_epsilon=1.0, min_epsilon=0.01, epsilon_decay=0.999995, n_action=4,
+    agent = Agent(lr=0.001, gamma=0.9, max_epsilon=1.0, min_epsilon=0.01, epsilon_decay=0.9999995, n_action=4,
                   n_state=16)
     scores = []
     win_pct_list = []
