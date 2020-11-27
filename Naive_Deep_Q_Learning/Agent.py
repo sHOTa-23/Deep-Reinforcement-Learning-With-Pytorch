@@ -1,6 +1,6 @@
 import numpy as np
 import torch as T
-from Naive_Deep_Q_Learning.Network import Naive_Q_network
+from Networks import Naive_Q_network
 
 
 class Agent:

@@ -1,6 +1,5 @@
 import gym
 import numpy as np
-from Naive_Deep_Q_Learning.Network import Naive_Q_network
 from Naive_Deep_Q_Learning.Agent import Agent
 from Utils import plot_learning_curve
 
