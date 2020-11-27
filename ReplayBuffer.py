@@ -9,7 +9,7 @@ class Replay_Buffer:
         self.new_states = np.zeros((self.alloc_size, *input_dim), dtype=np.float32)
         self.actions = np.zeros(self.alloc_size, dtype=np.int64)
         self.rewards = np.zeros(self.alloc_size, dtype=np.float32)
-        self.dones = np.zeros(self.alloc_size, dtype=np.uint8)
+        self.dones = np.zeros(self.alloc_size, dtype=np.bool)
 
     def add(self, state, action, reward, new_state, done):
         ind = self.log_size % self.alloc_size
