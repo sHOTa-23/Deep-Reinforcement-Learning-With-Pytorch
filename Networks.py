@@ -56,9 +56,9 @@ class Deep_Q_Network(nn.Module):
         conv1 = F.relu(self.conv1(state))
         conv2 = F.relu(self.conv2(conv1))
         conv3 = F.relu(self.conv3(conv2))
-        # conv3 shape is BS x n_filters x H x W
+
         conv_state = conv3.view(conv3.size()[0], -1)
-        # conv_state shape is BS x (n_filters * H * W)
+
         flat1 = F.relu(self.fc1(conv_state))
         actions = self.fc2(flat1)
 
