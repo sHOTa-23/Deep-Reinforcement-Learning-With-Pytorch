@@ -1,6 +1,6 @@
 import numpy as np
 import torch as T
-from Networks import Deep_Q_Network
+from Networks import Dueling_Deep_Q_Network
 from ReplayBuffer import Replay_Buffer
 
 
@@ -23,14 +23,16 @@ class Agent:
         self.action_space = [i for i in range(n_actions)]
 
         self.replay_buffer = Replay_Buffer(input_dim, mem_size)
-        self.Q_eval = Deep_Q_Network(lr, n_actions, self.env_name + '_' + self.algo + '_Q_eval', input_dim, chkpt_dir)
-        self.Q_target = Deep_Q_Network(lr, n_actions, self.env_name + '_' + self.algo + '_Q_target', input_dim,
-                                       chkpt_dir)
+        self.Q_eval = Dueling_Deep_Q_Network(lr, n_actions, self.env_name + '_' + self.algo + '_Q_eval', input_dim,
+                                             chkpt_dir)
+        self.Q_target = Dueling_Deep_Q_Network(lr, n_actions, self.env_name + '_' + self.algo + '_Q_target', input_dim,
+                                               chkpt_dir)
+
     def get_action(self, state):
         action = np.random.choice(self.action_space)
         if np.random.random() > self.epsilon:
             state = T.tensor(state, dtype=T.float).to(self.Q_eval.device)
-            action = T.argmax(self.Q_eval.forward(state)).item()
+            action = T.argmax(self.Q_eval.forward(state)[1]).item()
         return action
 
     def store_transition(self, state, action, reward, new_state, done):
@@ -74,13 +76,13 @@ class Agent:
 
         states, actions, rewards, next_states, dones = self.sample_memory()
         indices = np.arange(self.batch_size)
+        V, A = self.Q_eval.forward(states)
+        V_next, A_next = self.Q_target(next_states)
+        q_pred = T.add(V, (A - A.mean(dim=1, keepdim=True)))[indices, actions]
+        q_target = T.add(V_next, (A_next - A_next.mean(dim=1, keepdim=True)))[indices, actions]
 
-        q_pred = self.Q_eval.forward(states)[indices, actions]
-        q_next = self.Q_target.forward(next_states)
-        best_action = T.argmax(self.Q_eval.forward(next_states),dim=1)
-        q_next[dones] = 0.0
-        q_target = rewards + self.gamma * q_next[[indices, best_action]]
-
+        q_target[dones] = 0.0
+        q_target = rewards + self.gamma * q_target
         loss = self.Q_eval.loss(q_target, q_pred).to(self.Q_eval.device)
         loss.backward()
         self.Q_eval.optimizer.step()
