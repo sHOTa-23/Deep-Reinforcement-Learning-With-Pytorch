@@ -24,6 +24,24 @@ class Naive_Q_network(nn.Module):
         return fc2
 
 
+class REINFORCE_Policy_Network(nn.Module):
+    def __init__(self, lr, n_action, input_dim):
+        super(REINFORCE_Policy_Network, self).__init__()
+        self.fc1 = nn.Linear(*input_dim, 128)
+        self.fc2 = nn.Linear(128, 128)
+        self.fc3 = nn.Linear(128, n_action)
+
+        self.optimiser = optim.Adam(self.parameters(), lr=lr)
+        self.loss = nn.MSELoss()
+        self.device = T.device('cuda:0' if T.cuda.is_available() else 'cpu')
+        self.to(self.device)
+
+    def forward(self, state):
+        fc1 = F.relu(self.fc1(state))
+        fc2 = F.relu(self.fc2(fc1))
+        return self.fc3(fc2)
+
+
 class Deep_Q_Network(nn.Module):
     def __init__(self, lr, n_actions, name, input_dims, chkpt_dir):
         super(Deep_Q_Network, self).__init__()
