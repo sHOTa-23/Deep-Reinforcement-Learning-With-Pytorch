@@ -16,10 +16,12 @@ if __name__ == '__main__':
 
     scores = []
     for i in range(n_games):
+
         done = False
         state = env.reset()
         score = 0
         while not done:
+            env.render()
             action = agent.get_action(state)
             next_state, reward, done, info = env.step(action)
             score += reward

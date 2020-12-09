@@ -32,7 +32,6 @@ class REINFORCE_Policy_Network(nn.Module):
         self.fc3 = nn.Linear(128, n_action)
 
         self.optimiser = optim.Adam(self.parameters(), lr=lr)
-        self.loss = nn.MSELoss()
         self.device = T.device('cuda:0' if T.cuda.is_available() else 'cpu')
         self.to(self.device)
 
@@ -40,6 +39,30 @@ class REINFORCE_Policy_Network(nn.Module):
         fc1 = F.relu(self.fc1(state))
         fc2 = F.relu(self.fc2(fc1))
         return self.fc3(fc2)
+
+
+class ActorCriticNetwork(nn.Module):
+    def __init__(self, lr, gamma, n_action, input_dim, fc1_dim, fc2_dim):
+        super(ActorCriticNetwork, self).__init__()
+        self.lr = lr
+        self.gamma = gamma
+        self.n_action = n_action
+        self.fc1 = nn.Linear(*input_dim, fc1_dim)
+        self.fc2 = nn.Linear(fc1_dim, fc2_dim)
+        self.PI = nn.Linear(fc2_dim, n_action)
+        self.V = nn.Linear(fc2_dim, 1)
+
+        self.optimiser = optim.Adam(self.parameters(), lr=lr)
+        self.device = T.device('cuda:0' if T.cuda.is_available() else 'cpu')
+        self.to(self.device)
+
+    def forward(self, state):
+        fc1 = F.relu(self.fc1(state))
+        fc2 = F.relu(self.fc2(fc1))
+        PI = self.PI(fc2)
+        V = self.V(fc2)
+
+        return PI,V
 
 
 class Deep_Q_Network(nn.Module):
