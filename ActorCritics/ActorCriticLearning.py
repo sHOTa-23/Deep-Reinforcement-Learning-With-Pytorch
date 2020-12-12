@@ -18,7 +18,7 @@ if __name__ == '__main__':
         state = env.reset()
         score = 0
         while not done:
-            #env.render()
+            env.render()
             action = agent.get_action(state)
             next_state, reward, done, info = env.step(action)
             score += reward
