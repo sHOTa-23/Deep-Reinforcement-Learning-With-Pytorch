@@ -22,7 +22,7 @@ if __name__ == '__main__':
         score = 0
         agent.noise.reset()
         while not done:
-            #env.render()
+            env.render()
             action = agent.choose_action(state)
             next_state, reward, done, info = env.step(action)
             agent.remember(state, action, reward, next_state, done)
